@@ -1,49 +1,146 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="de">
   <head>
-    <title>Startup</title>
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-    <!-- Google Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css?family=Montserrat"
-      rel="stylesheet"
-    />
-
-    <!-- Note that the below Bootstrap file is a specific version. If you grab the most
-    current from Bootstrap website, you will see the button grow transition being a lot faster
-    than in my video.  Use whichever style sheet you like best! -->
-    <!-- Bootstrap CSS from a CDN. This way you don't have to include the bootstrap file yourself -->
-    <!-- CSS only -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
-      crossorigin="anonymous"
-    />
-    <!-- My own stylesheet -->
-    <link href="style.css" rel="stylesheet" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Abdelfatah Aziz | IT Lab Journey</title>
+    <meta name="description" content="Dokumentierte Homelab-Projekte von Abdelfatah Aziz zu Windows, PowerShell, Endpoint Management, Intune und Entra ID.">
+    <meta name="theme-color" content="#17212b">
+    <meta property="og:title" content="Abdelfatah Aziz | IT Lab Journey">
+    <meta property="og:description" content="Vom IT-Support zu Endpoint Management und Identity Security, nachvollziehbar dokumentiert.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fadidelba.github.io/">
+    <meta property="og:image" content="https://fadidelba.github.io/assets/images/system-inventory/03-successful-inventory.png">
+    <link rel="canonical" href="https://fadidelba.github.io/">
+    <link rel="stylesheet" href="/assets/css/site.css">
   </head>
   <body>
-    <div class="container d-flex align-items-center h-100">
-      <div class="row">
-        <header class="text-center col-12">
-          <h1 class="text-uppercase">
-            <strong>Biggest Startup event of the year</strong>
-          </h1>
-        </header>
-        <div class="buffer col-12"></div>
-        <section class="text-center col-12">
-          <hr />
-          <a href="https://mailchi.mp/f5db78d9e96d/startupcourse">
-            <button class="btn btn-primary btn-xl">Find out more</button>
-          </a>
-        </section>
+    <a class="skip-link" href="#content">Zum Inhalt springen</a>
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="brand" href="/" aria-label="Startseite Abdelfatah Aziz">
+          <span class="brand-name">Abdelfatah Aziz</span>
+          <span class="brand-role">IT Lab Journey</span>
+        </a>
+        <nav class="site-nav" aria-label="Hauptnavigation">
+          <a href="/" aria-current="page">Start</a>
+          <a href="/journey.html">Journey</a>
+          <a href="/projects.html">Projekte</a>
+          <a href="/about.html">Über mich</a>
+        </nav>
       </div>
-    </div>
+    </header>
+
+    <main id="content">
+      <section class="intro shell" aria-labelledby="intro-title">
+        <p class="eyebrow">IT Support · Endpoint Management · Identity Security</p>
+        <h1 id="intro-title">Praxis dokumentieren.<br>Verantwortung ausbauen.</h1>
+        <p class="intro-copy">
+          Ich bin Abdelfatah Aziz, IT-Supporter und Quereinsteiger. Hier dokumentiere
+          ich meinen Weg vom operativen Support zu Windows Endpoint Management,
+          Microsoft Intune und Entra ID mit reproduzierbaren Labs statt bloßen
+          Kurszertifikaten.
+        </p>
+        <div class="actions" aria-label="Direkteinstiege">
+          <a class="button button-primary" href="/projects.html">Projekte ansehen</a>
+          <a class="button button-secondary" href="/blog/windows-system-inventory.html">Ersten Lab-Artikel lesen</a>
+        </div>
+      </section>
+
+      <section class="proof-band" aria-label="Aktueller Stand">
+        <div class="shell proof-grid">
+          <div>
+            <span class="proof-label">Berufspraxis</span>
+            <strong>2 Jahre IT-Support</strong>
+          </div>
+          <div>
+            <span class="proof-label">Aktueller Fokus</span>
+            <strong>2nd Level &amp; Endpoint</strong>
+          </div>
+          <div>
+            <span class="proof-label">Lernpfad</span>
+            <strong>MD-102, danach SC-300</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="section shell" aria-labelledby="featured-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Aktueller Nachweis</p>
+            <h2 id="featured-title">Windows System Inventory Report</h2>
+          </div>
+          <span class="status-label">5/5 Tests bestanden</span>
+        </div>
+
+        <div class="featured-project">
+          <figure class="evidence-figure">
+            <img src="/assets/images/system-inventory/03-successful-inventory.png" alt="PowerShell-Ausgabe des erfolgreichen Windows-Systeminventars auf LAB-WIN-001" width="1090" height="400">
+            <figcaption>Erfolgreicher Inventarlauf in einer privaten Windows-11-ARM64-Lab-VM.</figcaption>
+          </figure>
+          <div class="featured-copy">
+            <p>
+              Ein PowerShell-Skript erfasst Windows-Systemdaten strukturiert und
+              exportiert sie als CSV. Der interessante Teil war nicht der Export,
+              sondern eine widersprüchliche Betriebssystemerkennung und ein
+              Fehlerpfad, der zunächst wie ein Erfolg wirkte.
+            </p>
+            <dl class="fact-list">
+              <div><dt>Werkzeuge</dt><dd>PowerShell 7, CIM, CSV</dd></div>
+              <div><dt>Nachweise</dt><dd>Code, Testskript, Laborbericht, Screenshots</dd></div>
+              <div><dt>Umgebung</dt><dd>Windows 11 Pro ARM64, VMware Fusion</dd></div>
+            </dl>
+            <div class="text-links">
+              <a href="/blog/windows-system-inventory.html">Fallstudie lesen</a>
+              <a href="https://github.com/fadidelba/windows-system-inventory" rel="noopener noreferrer">Code auf GitHub</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-muted" aria-labelledby="latest-title">
+        <div class="shell">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Lab Notes</p>
+              <h2 id="latest-title">Neueste Dokumentation</h2>
+            </div>
+          </div>
+          <div class="entry-grid">
+            <article class="entry-card">
+              <p class="entry-meta"><time datetime="2026-07-31">31. Juli 2026</time> · PowerShell</p>
+              <h3><a href="/blog/windows-system-inventory.html">Warum PowerShell mein Windows 11 als Windows 10 erkannte</a></h3>
+              <p>Datenquellen vergleichen, einen nicht terminierenden Fehler reproduzieren und den Endstand automatisiert prüfen.</p>
+              <a class="entry-link" href="/blog/windows-system-inventory.html">Artikel öffnen</a>
+            </article>
+            <article class="entry-card entry-card-next">
+              <p class="entry-meta">Als Nächstes · Endpoint Security</p>
+              <h3>TPM, Secure Boot und BitLocker inventarisieren</h3>
+              <p>Der nächste Nachweis wird Sicherheitszustände erfassen, Risiken benennen und die Ergebnisse getrennt vom ersten Projekt testen.</p>
+              <span class="entry-link entry-link-muted">In Vorbereitung</span>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section shell principles" aria-labelledby="principles-title">
+        <div>
+          <p class="eyebrow">Arbeitsweise</p>
+          <h2 id="principles-title">Was ein Lab hier belegen muss</h2>
+        </div>
+        <ol class="principle-list">
+          <li><strong>Anforderung</strong><span>Das technische Ziel und der Nutzen sind vor der Umsetzung klar.</span></li>
+          <li><strong>Kontrolle</strong><span>Risiko, Testfälle und Rückweg gehören zur Änderung.</span></li>
+          <li><strong>Nachweis</strong><span>Ergebnis, Fehler und Grenzen werden nachvollziehbar dokumentiert.</span></li>
+        </ol>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell footer-inner">
+        <p>© 2026 Abdelfatah Aziz</p>
+        <p><a href="https://github.com/fadidelba" rel="noopener noreferrer">GitHub-Profil</a></p>
+      </div>
+    </footer>
   </body>
 </html>
