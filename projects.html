@@ -42,13 +42,20 @@
           </div>
         </article>
 
-        <article class="project-card project-planned">
-          <div class="project-placeholder" aria-hidden="true"><span>02</span></div>
+        <article class="project-card">
+          <div class="project-visual">
+            <div class="state-summary state-summary-compact" role="group" aria-label="Ergebnis des Endpoint-Sicherheitsreports">
+              <div class="state-row"><span>TPM</span><strong class="state-ready">Ready</strong></div>
+              <div class="state-row"><span>Secure Boot</span><strong class="state-ready">Ready</strong></div>
+              <div class="state-row"><span>BitLocker</span><strong class="state-action">ActionRequired</strong></div>
+            </div>
+          </div>
           <div class="project-body">
-            <div class="project-topline"><span class="project-number">Projekt 02</span><span class="status-label status-planned">Geplant</span></div>
-            <h2>Endpoint Security State Report</h2>
-            <p>Geplanter lokaler Report für TPM, Secure Boot und BitLocker mit verständlicher Bewertung des Sicherheitszustands und getrennten Negativtests.</p>
-            <ul class="tag-list" aria-label="Geplante Technologien"><li>PowerShell</li><li>TPM</li><li>Secure Boot</li><li>BitLocker</li></ul>
+            <div class="project-topline"><span class="project-number">Projekt 02</span><span class="status-label">Abgeschlossen</span></div>
+            <h2>Endpoint Security Readiness Report</h2>
+            <p>Lokaler PowerShell-Report für TPM, Secure Boot und BitLocker. Sieben Tests prüfen Positiv- und Negativzustände; der Live-Lauf machte ein vollständig verschlüsseltes Volume mit deaktiviertem Schutz sichtbar.</p>
+            <ul class="tag-list" aria-label="Verwendete Technologien"><li>PowerShell 7</li><li>TPM</li><li>Secure Boot</li><li>BitLocker</li><li>Testing</li></ul>
+            <div class="text-links"><a href="/blog/endpoint-security-readiness.html">Fallstudie</a><a href="https://github.com/fadidelba/endpoint-security-readiness-report" rel="noopener noreferrer">Repository</a></div>
           </div>
         </article>
       </section>

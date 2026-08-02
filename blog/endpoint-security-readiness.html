@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Vollständig verschlüsselt – und trotzdem nicht geschützt | Abdelfatah Aziz</title>
+    <meta name="description" content="Ein lokales PowerShell-Lab zeigt, warum vollständige BitLocker-Verschlüsselung und aktiver Schutz getrennt geprüft werden müssen.">
+    <meta property="og:title" content="Vollständig verschlüsselt – und trotzdem nicht geschützt">
+    <meta property="og:description" content="TPM, Secure Boot und BitLocker getrennt bewerten und einen unerwarteten Schutzstatus sichtbar machen.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://fadidelba.github.io/blog/endpoint-security-readiness.html">
+    <meta property="og:image" content="https://fadidelba.github.io/assets/images/endpoint-security/og.png">
+    <link rel="canonical" href="https://fadidelba.github.io/blog/endpoint-security-readiness.html">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/assets/css/site.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Zum Inhalt springen</a>
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="brand" href="/"><span class="brand-name">Abdelfatah Aziz</span><span class="brand-role">IT Lab Journey</span></a>
+        <nav class="site-nav" aria-label="Hauptnavigation">
+          <a href="/">Start</a><a href="/journey.html">Journey</a><a href="/projects.html">Projekte</a><a href="/about.html">Über mich</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="content">
+      <article class="article shell">
+        <header class="article-header">
+          <a class="back-link" href="/projects.html">Zurück zu den Projekten</a>
+          <p class="eyebrow">PowerShell · Endpoint Security · Lab 02</p>
+          <h1>Vollständig verschlüsselt – und trotzdem nicht geschützt</h1>
+          <p class="article-lead">Mein zweites lokales Windows-Lab zeigt, warum ein Endpoint-Report BitLocker-Verschlüsselung und aktiven Schutz als zwei getrennte Zustände bewerten muss.</p>
+          <div class="article-meta"><time datetime="2026-08-02">2. August 2026</time><span>7 Minuten</span><span>Private Lab-Umgebung</span></div>
+        </header>
+
+        <div class="state-summary article-result" role="group" aria-label="Live-Ergebnis des Endpoint-Sicherheitsreports">
+          <div class="state-row"><span>TPM vorhanden und bereit</span><strong class="state-ready">Ready</strong></div>
+          <div class="state-row"><span>Secure Boot aktiviert</span><strong class="state-ready">Ready</strong></div>
+          <div class="state-row"><span>BitLocker vollständig verschlüsselt, Schutz aus</span><strong class="state-action">ActionRequired</strong></div>
+          <div class="state-row"><span>Gesamtbewertung</span><strong class="state-action">ActionRequired</strong></div>
+        </div>
+
+        <div class="article-layout">
+          <nav class="article-toc" aria-label="Inhalt des Artikels">
+            <strong>Inhalt</strong>
+            <a href="#ziel">Das Ziel</a>
+            <a href="#daten">Sichere Datenauswahl</a>
+            <a href="#tests">Sieben Tests</a>
+            <a href="#befund">Der Befund</a>
+            <a href="#entscheidung">Keine automatische Korrektur</a>
+            <a href="#fazit">Fazit</a>
+          </nav>
+
+          <div class="article-body prose">
+            <section id="ziel">
+              <h2>Das Ziel</h2>
+              <p>Das Testsystem ist eine private Windows-11-Pro-VM auf ARM64. Ein PowerShell-Report sollte drei Fragen beantworten: Ist das TPM vorhanden und bereit? Ist Secure Boot aktiviert? Ist das Systemlaufwerk vollständig verschlüsselt und aktiv geschützt?</p>
+              <p>Die Ergebnisse sollten als strukturiertes Objekt und CSV vorliegen. Jeder Bereich bekommt eine eigene Bewertung; der Gesamtstatus ist nur dann <code>Ready</code>, wenn alle drei Bereiche bereit sind.</p>
+            </section>
+
+            <section id="daten">
+              <h2>Sichere Datenauswahl</h2>
+              <p>Der Live-Check verwendet <code>Get-Tpm</code>, <code>Confirm-SecureBootUEFI</code> und <code>Get-BitLockerVolume</code>. Aus den Ergebnissen übernimmt das Skript nur notwendige Statusfelder. TPM-OwnerAuth, BitLocker-Key-Protektoren, Recovery Passwords und Recovery Keys werden nicht abgefragt.</p>
+              <p>Die BitLocker-Regel prüft Verschlüsselung und Schutz getrennt:</p>
+              <pre><code>$bitLockerState = if (
+    $BitLockerProtectionStatus -eq 'On' -and
+    $BitLockerVolumeStatus -eq 'FullyEncrypted'
+) {
+    'Ready'
+}
+else {
+    'ActionRequired'
+}</code></pre>
+            </section>
+
+            <section id="tests">
+              <h2>Sieben Tests vor dem Live-Lauf</h2>
+              <p>Der automatisierte Testlauf verwendet keine Zusatzmodule. Er prüft einen bereiten Gesamtzustand sowie negative Fälle für TPM, Secure Boot und BitLocker. Dazu kommen drei Qualitätsprüfungen:</p>
+              <ol>
+                <li>Der Report enthält kein Owner-, Key- oder Recovery-Material.</li>
+                <li>Der CSV-Roundtrip erhält die Gesamtbewertung.</li>
+                <li>Ein fehlender Zielordner erzeugt einen kontrollierten Fehler.</li>
+              </ol>
+              <p>Der finale Lauf auf <code>LAB-WIN-001</code> endete mit <code>RESULT: 7/7 tests passed.</code></p>
+            </section>
+
+            <section id="befund">
+              <h2>Der tatsächliche Befund</h2>
+              <pre><code>TpmState                      : Ready
+SecureBootState               : Ready
+BitLockerProtectionStatus     : Off
+BitLockerVolumeStatus         : FullyEncrypted
+BitLockerEncryptionMethod     : XtsAes128
+BitLockerEncryptionPercentage : 100
+BitLockerState                : ActionRequired
+OverallState                  : ActionRequired</code></pre>
+              <p>TPM und Secure Boot waren wie erwartet bereit. BitLocker zeigte jedoch zwei unterschiedliche Wahrheiten: Das Volume war vollständig verschlüsselt, der aktive Schutzstatus stand aber auf <code>Off</code>.</p>
+              <p>Microsoft beschreibt <code>ProtectionStatus: Off</code> bei einem verschlüsselten Volume als Zustand, in dem der Volume-Schlüssel nicht aktiv durch einen Key-Protektor gesichert ist. Das ist unter anderem mit deaktivierten oder ausgesetzten Key-Protektoren vereinbar. Weil dieses Lab keine Key-Protektoren abfragt, dokumentiere ich diese Möglichkeit – nicht eine unbewiesene Ursache.</p>
+              <p>Quellen: <a href="https://learn.microsoft.com/en-us/windows/win32/secprov/getprotectionstatus-win32-encryptablevolume" rel="noopener noreferrer">GetProtectionStatus method</a> und <a href="https://learn.microsoft.com/en-us/windows/security/operating-system-security/data-protection/bitlocker/operations-guide" rel="noopener noreferrer">BitLocker operations guide</a>.</p>
+            </section>
+
+            <section id="entscheidung">
+              <h2>Warum das Skript nichts automatisch korrigiert</h2>
+              <p>Ein Diagnosewerkzeug sollte aus einem Befund nicht ungefragt eine Änderung machen. Das Aktivieren des Schutzes betrifft Startverhalten, TPM und Recovery-Verfahren. Ohne vorher gesicherten und getesteten Rückweg wäre ein automatisches <code>Resume-BitLocker</code> keine kontrollierte Administration.</p>
+              <p>Der Schutz blieb deshalb unverändert. Ursache, Key-Protektor-Zustand, Recovery-Verfahren, Risiko und Rollback gehören in einen späteren separaten Change.</p>
+            </section>
+
+            <section id="fazit">
+              <h2>Was ich aus dem Lab mitnehme</h2>
+              <p><code>FullyEncrypted</code> und <code>ProtectionStatus: On</code> sind nicht dasselbe. Ein guter Endpoint-Report prüft beides, macht negative Zustände sichtbar und bleibt bei sicherheitsrelevanten Änderungen standardmäßig lesend.</p>
+              <p>Das Ergebnis stammt aus einer privaten Windows-VM. Es ist ein lokaler Lernnachweis und keine Intune- oder Produktionserfahrung.</p>
+              <aside class="article-callout">
+                <strong>Vollständiger Nachweis</strong>
+                <p>Quelltext, sieben Tests, bereinigte Beispielausgabe, Runbook und Laborbericht liegen im öffentlichen Repository.</p>
+                <a href="https://github.com/fadidelba/endpoint-security-readiness-report" rel="noopener noreferrer">Repository auf GitHub öffnen</a>
+              </aside>
+            </section>
+          </div>
+        </div>
+      </article>
+    </main>
+    <footer class="site-footer"><div class="shell footer-inner"><p>© 2026 Abdelfatah Aziz</p><p><a href="https://github.com/fadidelba" rel="noopener noreferrer">GitHub-Profil</a></p></div></footer>
+  </body>
+</html>

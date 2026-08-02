@@ -621,6 +621,59 @@ figcaption {
   font-weight: 700;
 }
 
+.state-summary {
+  overflow: hidden;
+  border: 1px solid #44515c;
+  border-radius: 6px;
+  background: #101820;
+  color: #edf4f7;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+.state-summary-compact {
+  width: 100%;
+}
+
+.state-row {
+  min-height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid #33414c;
+}
+
+.state-row:last-child {
+  border-bottom: 0;
+}
+
+.state-row span {
+  color: #b9c5ce;
+}
+
+.state-row strong {
+  font-size: 0.86rem;
+}
+
+.state-ready {
+  color: #74d5c8;
+}
+
+.state-action {
+  color: #ffb76e;
+}
+
+.article-result {
+  max-width: 920px;
+  margin-bottom: 4rem;
+}
+
+.article-result .state-row {
+  min-height: 76px;
+  padding-inline: 1.5rem;
+}
+
 .project-planned {
   opacity: 0.9;
 }
