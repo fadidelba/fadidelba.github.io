@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Vom Status zur Ursache: BitLocker ohne Key Protector | Abdelfatah Aziz</title>
+    <meta name="description" content="Eine sichere PowerShell-Diagnose zeigt, warum ein vollständig verschlüsseltes Windows-Volume ohne Key Protector noch nicht ausreichend geschützt ist.">
+    <meta property="og:title" content="Vom Status zur Ursache: BitLocker ohne Key Protector">
+    <meta property="og:description" content="Den deaktivierten BitLocker-Schutz eingrenzen, ohne Recovery-Daten offenzulegen oder vorschnell Änderungen auszuführen.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://fadidelba.github.io/blog/bitlocker-key-protector-diagnose.html">
+    <link rel="canonical" href="https://fadidelba.github.io/blog/bitlocker-key-protector-diagnose.html">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/assets/css/site.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Zum Inhalt springen</a>
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="brand" href="/"><span class="brand-name">Abdelfatah Aziz</span><span class="brand-role">IT Lab Journey</span></a>
+        <nav class="site-nav" aria-label="Hauptnavigation">
+          <a href="/">Start</a><a href="/journey.html">Journey</a><a href="/projects.html">Projekte</a><a href="/about.html">Über mich</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="content">
+      <article class="article shell">
+        <header class="article-header">
+          <a class="back-link" href="/projects.html">Zurück zu den Projekten</a>
+          <p class="eyebrow">PowerShell · BitLocker · Lab 03</p>
+          <h1>Vom Status zur Ursache: BitLocker ohne Key Protector</h1>
+          <p class="article-lead">Mein letzter Endpoint-Report zeigte ein vollständig verschlüsseltes Volume mit ausgeschaltetem Schutz. Im nächsten Diagnose-Schritt habe ich geprüft, was zwischen diesen beiden Zuständen fehlt.</p>
+          <div class="article-meta"><time datetime="2026-08-04">4. August 2026</time><span>4 Minuten</span><span>Private Lab-Umgebung</span></div>
+        </header>
+
+        <div class="state-summary article-result" role="group" aria-label="Ergebnis der BitLocker-Diagnose">
+          <div class="state-row"><span>Volume</span><strong class="state-ready">FullyEncrypted</strong></div>
+          <div class="state-row"><span>Schutzstatus</span><strong class="state-action">Off</strong></div>
+          <div class="state-row"><span>Key Protector</span><strong class="state-action">Keiner</strong></div>
+          <div class="state-row"><span>Konfigurationsänderung</span><strong class="state-ready">Keine</strong></div>
+        </div>
+
+        <div class="article-layout">
+          <nav class="article-toc" aria-label="Inhalt des Artikels">
+            <strong>Inhalt</strong>
+            <a href="#ausgangslage">Ausgangslage</a>
+            <a href="#abfrage">Sichere Abfrage</a>
+            <a href="#ergebnis">Ergebnis</a>
+            <a href="#entscheidung">Entscheidung</a>
+            <a href="#fazit">Fazit</a>
+          </nav>
+
+          <div class="article-body prose">
+            <section id="ausgangslage">
+              <h2>Vom Symptom zur Hypothese</h2>
+              <p>Der vorherige Readiness Report hatte bereits zwei Zustände getrennt erfasst: <code>VolumeStatus: FullyEncrypted</code> und <code>ProtectionStatus: Off</code>. Die offene Frage war, ob ein vorhandener Protector nur ausgesetzt war oder ob überhaupt kein Key Protector registriert war.</p>
+              <p>Das Ziel dieses Labs war ausschließlich die Diagnose. Recovery Passwords, Protector-IDs und Schlüsselmaterial sollten weder angezeigt noch gespeichert werden.</p>
+            </section>
+
+            <section id="abfrage">
+              <h2>Nur Typ und Anzahl abfragen</h2>
+              <p>Statt das vollständige Protector-Objekt auszugeben, gruppiert die Abfrage nur nach <code>KeyProtectorType</code>:</p>
+              <pre><code>$volume = Get-BitLockerVolume -MountPoint 'C:'
+
+$volume |
+    Select-Object MountPoint, VolumeStatus,
+        ProtectionStatus, EncryptionMethod
+
+$volume.KeyProtector |
+    Group-Object KeyProtectorType |
+    Select-Object Name, Count</code></pre>
+              <p>Damit wäre beispielsweise ein TPM- oder Recovery-Protector als Typ und Anzahl sichtbar, ohne seinen Identifier oder ein Recovery Password offenzulegen.</p>
+            </section>
+
+            <section id="ergebnis">
+              <h2>Die leere Ausgabe war der entscheidende Befund</h2>
+              <pre><code>MountPoint   VolumeStatus   ProtectionStatus   EncryptionMethod
+C:           FullyEncrypted Off                XtsAes128
+
+# Keine Ausgabe für KeyProtectorType</code></pre>
+              <p>Die zweite Pipeline lieferte keine Zeile. Die Protector-Sammlung war leer: Auf dem Betriebssystemlaufwerk war kein Key Protector registriert.</p>
+              <p>Microsoft dokumentiert, dass beim Entfernen aller Key Protectors der Verschlüsselungsschlüssel ungeschützt auf dem Volume gespeichert wird. Die verschlüsselten Datenblöcke allein belegen daher noch keinen wirksamen Schutz des Schlüssels. Quelle: <a href="https://learn.microsoft.com/en-us/powershell/module/bitlocker/remove-bitlockerkeyprotector" rel="noopener noreferrer">Remove-BitLockerKeyProtector</a>.</p>
+            </section>
+
+            <section id="entscheidung">
+              <h2>Warum ich den Schutz noch nicht aktiviert habe</h2>
+              <p><code>Resume-BitLocker</code> wäre an dieser Stelle keine vollständige Remediation: Es fehlt zunächst ein kontrollierter Recovery-Weg und anschließend ein geeigneter Start-Protector. Microsoft beschreibt das Recovery Password als Rückweg, falls der normale Entsperrmechanismus nicht funktioniert. Quelle: <a href="https://learn.microsoft.com/en-us/windows/security/operating-system-security/data-protection/bitlocker/recovery-overview" rel="noopener noreferrer">BitLocker recovery overview</a>.</p>
+              <p>Der nächste Change bekommt deshalb eine eigene Reihenfolge: privaten Recovery-Speicherort festlegen, Recovery Protector anlegen und verifizieren, TPM Protector hinzufügen, Schutz aktivieren und einen Reboot-Test durchführen. Recovery-Material bleibt außerhalb von Screenshots, Git und Blog.</p>
+            </section>
+
+            <section id="fazit">
+              <h2>Was ich aus dem Diagnose-Lab mitnehme</h2>
+              <p>Ein Statusfeld beschreibt ein Symptom, aber noch nicht automatisch die Ursache. Erst die zweite, enger gefasste Abfrage zeigte, dass auf diesem Volume kein Key Protector vorhanden war. Ebenso wichtig war die Grenze des Labs: Ein bestätigter Befund ist kein Freibrief für eine unvorbereitete Sicherheitsänderung.</p>
+              <p>Die Untersuchung lief ausschließlich in einer privaten Windows-11-ARM64-VM. Sie ist ein lokaler Lernnachweis und keine Intune- oder Produktionserfahrung.</p>
+              <aside class="article-callout">
+                <strong>Vorheriger Schritt</strong>
+                <p>Der Endpoint Security Readiness Report erklärt, wie der widersprüchliche Ausgangszustand zuerst sichtbar wurde.</p>
+                <a href="/blog/endpoint-security-readiness.html">Readiness-Fallstudie öffnen</a>
+              </aside>
+            </section>
+          </div>
+        </div>
+      </article>
+    </main>
+    <footer class="site-footer"><div class="shell footer-inner"><p>© 2026 Abdelfatah Aziz</p><p><a href="https://github.com/fadidelba" rel="noopener noreferrer">GitHub-Profil</a></p></div></footer>
+  </body>
+</html>
