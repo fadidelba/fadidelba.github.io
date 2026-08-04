@@ -7,10 +7,40 @@
   --border: #d9dfe3;
   --accent: #0f766e;
   --accent-dark: #0b5e58;
+  --accent-button-ink: #ffffff;
   --link: #1d4ed8;
   --warm: #a94f12;
   --code: #101820;
+  --header-bg: rgba(255, 255, 255, 0.96);
+  --body-copy: #303b44;
+  --panel-alt: #fafbfb;
+  --callout-bg: #eef7f6;
+  --tag-ink: #3f4b55;
+  --footer-bg: #17212b;
+  --footer-ink: #d9e0e5;
   --max-width: 1120px;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ink: #edf4f2;
+  --muted: #a9b7b3;
+  --soft: #141d1b;
+  --surface: #0b1110;
+  --border: #2b3b37;
+  --accent: #61cbbd;
+  --accent-dark: #89ded3;
+  --accent-button-ink: #071310;
+  --link: #82b8ff;
+  --warm: #f0ad6b;
+  --code: #050908;
+  --header-bg: rgba(11, 17, 16, 0.96);
+  --body-copy: #cbd6d3;
+  --panel-alt: #101816;
+  --callout-bg: #112522;
+  --tag-ink: #c2cfcb;
+  --footer-bg: #070b0a;
+  --footer-ink: #cbd6d3;
 }
 
 * {
@@ -134,7 +164,7 @@ pre {
   top: 0;
   z-index: 20;
   border-bottom: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.96);
+  background: var(--header-bg);
 }
 
 .header-inner {
@@ -168,6 +198,47 @@ pre {
   align-items: center;
   gap: 1.6rem;
   white-space: nowrap;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.theme-toggle {
+  min-height: 38px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.42rem;
+  padding: 0.38rem 0.62rem;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  background: var(--soft);
+}
+
+.theme-toggle-icon {
+  width: 1rem;
+  color: var(--accent-dark);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.theme-toggle-floating {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
 }
 
 .site-nav a {
@@ -244,7 +315,7 @@ pre {
 
 .button-primary {
   background: var(--accent);
-  color: #fff;
+  color: var(--accent-button-ink);
 }
 
 .button-primary:hover {
@@ -447,7 +518,7 @@ figcaption {
 }
 
 .entry-card-next {
-  background: #fafbfb;
+  background: var(--panel-alt);
 }
 
 .principles {
@@ -602,7 +673,7 @@ figcaption {
   border: 1px solid var(--border);
   border-radius: 4px;
   background: var(--soft);
-  color: #3f4b55;
+  color: var(--tag-ink);
   font-size: 0.78rem;
   font-weight: 650;
 }
@@ -686,7 +757,7 @@ figcaption {
 }
 
 .prose {
-  color: #303b44;
+  color: var(--body-copy);
 }
 
 .prose h2 {
@@ -795,7 +866,7 @@ figcaption {
   margin-top: 2rem;
   padding: 1.25rem;
   border-left: 4px solid var(--accent);
-  background: #eef7f6;
+  background: var(--callout-bg);
 }
 
 .article-callout p {
@@ -816,8 +887,8 @@ figcaption {
 
 .site-footer {
   border-top: 1px solid var(--border);
-  background: var(--ink);
-  color: #d9e0e5;
+  background: var(--footer-bg);
+  color: var(--footer-ink);
 }
 
 .footer-inner {
@@ -879,6 +950,32 @@ figcaption {
   }
 }
 
+@media (max-width: 760px) {
+  .site-header {
+    position: static;
+  }
+
+  .header-inner {
+    padding-block: 0.85rem;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .header-actions {
+    width: 100%;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .site-nav {
+    width: 100%;
+    gap: 0.85rem 1.2rem;
+    flex-wrap: wrap;
+  }
+}
+
 @media (max-width: 660px) {
   .shell {
     width: min(100% - 32px, var(--max-width));
@@ -892,21 +989,8 @@ figcaption {
     font-size: 1.65rem;
   }
 
-  .site-header {
-    position: static;
-  }
-
-  .header-inner {
-    padding-block: 0.85rem;
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .site-nav {
-    width: 100%;
-    gap: 0.85rem 1.2rem;
-    flex-wrap: wrap;
+  .theme-toggle {
+    min-height: 36px;
   }
 
   .site-nav a {
@@ -1025,14 +1109,28 @@ figcaption {
 }
 
 @media print {
+  :root,
+  :root[data-theme="dark"] {
+    color-scheme: light;
+    --ink: #000000;
+    --muted: #333333;
+    --soft: #ffffff;
+    --surface: #ffffff;
+    --border: #b8b8b8;
+    --body-copy: #000000;
+    --callout-bg: #ffffff;
+  }
+
   .site-header,
   .site-footer,
   .article-toc,
-  .actions {
+  .actions,
+  .theme-toggle {
     display: none;
   }
 
   body {
+    background: #ffffff;
     color: #000;
   }
 
